@@ -1,0 +1,53 @@
+spring:
+  profiles:
+    active:
+    - dev
+
+management:
+  endpoints:
+    web:
+      exposure: 
+        include: "*"     
+---
+spring:
+  profiles: local	
+  cloud:
+    services:
+      registrationMethod: route
+    gateway:
+      routes:
+      - id: route_to_staticfile
+        uri: lb://Staticfile
+        predicates:
+        - Path=/frameworks/**
+        filters:
+        - name: Hystrix
+          args:
+            name: fallbackcmd
+            fallbackUri: forward:/incaseoffailureusethis
+      - id: route_to_icrm
+        uri: lb://ICRM
+        predicates:
+        - Path=/**       
+        
+eureka:
+  client:
+    enabled: false
+    
+---
+spring:
+  profiles: dev
+  cloud:
+    services:
+      registrationMethod: route
+    gateway:
+      routes:
+      - id: route_to_staticfile
+        uri: https://crm-serve-staticfile-dev.app.pcfdev.com
+        predicates:
+        - Path=/resources/**
+      - id: route_to_default
+        uri: lb://ICRM-app
+        predicates:
+        - Path=/**     
+     

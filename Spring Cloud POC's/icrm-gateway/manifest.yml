@@ -1,0 +1,13 @@
+---
+applications:
+-   name: icrm-gateway-qa
+    path: /target/icrm-gateway-0.0.1-SNAPSHOT.jar
+    instances: 1
+    services:      
+      - icrm-service-registry
+      - icrm-gateway-config-server
+      - Rabbitmq
+      - icrm-cups-service
+    env:
+      SPRING_PROFILES_ACTIVE: dev
+      ENCRYPT_KEY: mysecretkey
